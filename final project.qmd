@@ -1,0 +1,512 @@
+---
+title: "Statistical Analyses on St. Louis Real Estate"
+author: "Grant Russell"
+format: pdf
+editor: visual
+---
+
+## Cover Information
+
+-   **Student:** Grant Russell
+
+-   **Section:** MATH 1320 Intro to Probability & Stats (In-person)
+
+-   **Date:** 2025-11-23
+
+-   **Assignment:** Final Project
+
+------------------------------------------------------------------------
+
+## Executive Summary
+
+This report provides a comprehensive overview of homes in the Saint Louis area and addresses key questions about home sale prices, the association between home architectural style and the presence of a garage, and whether a home's square footage can be used to predict its sale price.
+
+A local housing blog claimed that the average sale price of a home in this market is \$300,000. Using a one-sample z-test with our home sale price data, we are able to infer that this claim is not untrue. The confidence interval tells us that we are 95% confident that the true average sale price for a home is between \$280,398.40 and \$310,030.20. Therefore, the local housing blog is within the parameters of our confidence interval, and the null hypothesis, which is the sale price being equal to \$300,000, is not rejected; therefore, the blog is making an accurate statement.
+
+There are two different styles of homes in this data set: ranch style and colonial style. I investigated whether there is any statistically significant difference in the average sale price between these two styles. I used a two-sample (Welch) t-test with the sale price data of ranch and colonial homes. The results show that there is no statistically significant difference in sale prices between ranch and colonial style homes. Therefore, the null hypothesis that the average sale price of ranch-style homes is equal to colonial-style homes is not rejected. The confidence interval for the true difference ranges from -\$16,026.99 to \$13,276.99. Therefore, we are 95% confident that the true difference lies between -\$16,026.99 and \$13,276.99. Based on these results, style is not a significant factor in determining sale price when choosing between these two types of homes.
+
+The St. Louis Real estate agency believes that more than 75% of the homes in this current market have a garage, and in order to test this claim, I used a one-sample proportion test. There was an issue using this test because two conditions must be satisfied to test for the normality of data. The second condition of the proportion test is not satisfied; therefore, this claim must be tested using another type of test instead of the one-sample proportion test. Therefore, we have no conclusive data on whether more than 75% of homes in the current market have a garage.
+
+Another question posed is whether the architectural style of a house correlates with whether a home has a garage or not. In order to test if there is a correlation on whether events are independent or dependent, a chi-squared test was used. Through this test, we can infer that the events are independent of one another. Our null hypothesis of the architectural style being independent of the presence of a garage is not rejected. Therefore, when looking for a home to purchase, either a ranch style or a colonial style, find one that fits your preference, whether you want a home with a garage or not.
+
+In our data set, I analyzed three neighborhoods: CWE, Soulard, and Bevo. I investigated whether average sale prices differed across these neighborhoods, using an ANOVA test to compare their mean sale prices. The ANOVA results indicate a significant difference in average sale price among the three neighborhoods. Our null hypothesis that the CWE, Soulard, and Bevo average sale prices are equal was rejected. After the ANOVA, we calculated each neighborhood's sample mean sale price and confidence intervals. For homes in CWE, we are 95% confident the true mean sale price is between \$291,008.20 and \$340,591.80. For homes in Bevo, we are 95% confident the true mean sale price is between \$263,978.30 and \$316,244.00. For homes in Soulard, we are 95% confident the true mean sale price is between \$251,311.60 and \$303,577.30. Supporting our ANOVA results, these confidence intervals confirm a statistically significant difference between neighborhoods. If you want the lowest home prices, Soulard is the best choice. Bevo is next, as it is the second least expensive neighborhood. CWE is the most expensive among the three. This recommendation is based on price alone; Soulard has the lowest, Bevo the next lowest, and CWE the highest mean sale price.
+
+The next trend that is analyzed is whether a home's square footage can be used to predict the sale price. In order to test this, we used a linear regression test to see if a home's square footage can predict its sale price. The linear regression test shows us that there is a positive linear relationship between square footage and sale price. This means the square footage can be used as a predictor for a home's sale price. The R-squared value shows us whether there is a weak or strong correlation between square footage and sale price. Our R-squared value is 0.9834, meaning there is a strong correlation between square footage and home price. One square foot is equivalent to \$220.50. The confidence interval that is found tells us that with 95% confidence, each estimated square foot will increase the price by \$208.96 to \$220.50. So when looking for your next home to purchase, the square footage of a home plays a major role in the home's sale price.
+
+Through this report, we can infer that the average sale price of homes is between \$280,398.40 and \$310,030.20. We can infer that there is no significant difference in the sale price based on style. Architectural style and the presence of a garage are independent. The average sale price across the neighborhood is statistically significant, and a home's square footage is a good predictor of the home sale price.
+
+------------------------------------------------------------------------
+
+## Introduction
+
+As a data analyst for a St. Louis real estate agency, it is my objective to complete several tasks relating to and analyzing the homes in our sample size. The analysis is based on our sample of 28 home sale prices in the Saint Louis area from 2023 - 2025. Our data set includes our data, which is home prices in US dollars. Our sigma_known, which is our population standard deviation in US dollars. Our significance level, which is $\alpha = 0.05$.
+
+The goals of the assigned tasks are to analyze all of the property data and interpret the results, and come up with decisive conclusions. The goal is to emphasize inference, method selection, and critical interpretation.
+
+------------------------------------------------------------------------
+
+## Descriptive Statistics
+
+**Data Setup**
+
+**Data (28 Home Prices in U.S. Dollars):** \$305000, \$280000, \$265000, \$315000, \$290000, \$275000, \$325000, \$300000, \$285000, \$310000, \$282000, \$270000, \$330000, \$295000, \$290000, \$320000, \$288000, \$280000, \$308000, \$281000, \$267000, \$312000, \$292000, \$278000, \$322000, \$303000. \$287000, \$311000
+
+**Task**
+
+Calculate and report descriptive statistics for the home price data: Sample Size(n), Mean, Median, Standard Deviation(s), Variance (s^2^ ), Range, IQR, and the Five-Number Summary.
+
+## Results
+
+This data shows the sample size (28 home prices), average home price (\$295,214.30), median home price (\$291,000), the highest home price (\$330,000), the lowest home price (\$265,000), and the standard deviation, which is \$18,349.20. The standard deviation is a small deviation considering our data set, but it still needs to be observed. The IQR \$29,500, showing the spread of the middle 50% of the home price data. The Five-Number Summary shows the minimum home price (\$265,000), quarter one or 25% of the home price data (\$280,500), median (\$291,000), quarter three or 75% of the home price data (\$310,500), and the maximum of the data (\$330,000).
+
+```{r}
+
+#home prices 
+data <- c(305000, 280000, 265000, 315000, 290000, 275000, 325000, 300000, 
+          285000, 310000, 282000, 270000, 330000, 295000, 290000, 320000, 
+          288000, 280000, 308000, 281000, 267000, 312000, 292000, 278000, 
+          322000, 303000, 287000, 311000)
+
+#descriptive statistics 
+data_mean = mean(data)
+data_median = median(data)
+data_sd = sd(data)
+data_var = var(data)
+data_IQR = IQR(data)
+data_range = range(data)
+data_fivenum = fivenum(data)
+
+#print descriptive statistics 
+data_mean
+data_median
+data_sd
+data_var
+data_IQR
+data_range
+data_fivenum
+
+```
+
+## Visualizations
+
+**Task**
+
+Generate a histogram of home prices and a box plot of home prices
+
+```{r}
+
+#visualizations
+data <- c(305000,280000,265000,315000,290000,275000,325000,300000,
+          285000,310000,282000,270000,330000,295000,290000,320000,
+          288000,280000,308000,281000,267000,312000,292000,278000,
+          322000,303000,287000,311000)
+
+#histogram
+hist(data,
+     main = "Histogram of Home Prices",
+     xlab = "Home Prices (US Dollars)",
+     ylab = "Frequency of Homes")
+
+#boxplot
+boxplot(data,
+        main = "Box Plot of Home Prices",
+        xlab = "Frequency of Homes",
+        ylab = "Home Prices (US Dollars)")
+  
+```
+
+**Visual Interpretation**
+
+The histogram and box plot both show a slightly right-skewed distribution; however, it is mostly symmetric. There are no potential outliers in the box plot. Through the box plot and histogram approximate normality of the data was checked.
+
+------------------------------------------------------------------------
+
+## Task 1 - One-Mean Inference
+
+**Question:** A local housing blog claims the average sale price for a home in this market is \$300,000. Test this claim using the one-mean method assigned to your last-name band and report a 95% CI with interpretation in context.
+
+1.  A **one-sample z-test** was used, assuming a known population standard deviation of \$40,000.
+
+Approximate normality of the data was checked using the box plot and histogram.
+
+## Results
+
+**Data (28 home prices in U.S. dollars):** \$305000, \$280000, \$265000, \$315000, \$290000, \$275000, \$325000, \$300000, \$285000, \$310000, \$282000, \$270000, \$330000, \$295000, \$290000, \$320000, \$288000, \$280000, \$308000, \$281000, \$267000, \$312000, \$292000, \$278000, \$322000, \$303000, \$287000, \$311000
+
+**Required Variables**
+
+1.  A numeric vector named home_prices containing the 28 home prices
+2.  A variable x_bar for the mean of the numeric vector home_prices
+3.  A variable mu0 for the hypothesized mean (\$300,000)
+4.  A variable sigma for the population standard deviation, which is used in the z-test
+5.  A variable n for the sample size
+
+**Hypothesis**
+
+-   $H_0$: The true mean home price is \$300,000. ($μ$ = 300,000)
+-   $H_A$: The true mean home price is not \$300,000. ($μ$ $≠$ 300,000)
+
+**Task**
+
+1.  Calculate the z-statistic
+2.  Calculate the p-value for a two-tailed test
+3.  Print the z-statistic and p-value
+4.  Report a 95% confidence interval and interpret the confidence interval
+5.  State your conclusion (Reject H₀ or Fail to Reject H₀) based on comparing the p-value to $α$ = 0.05
+
+```{r}
+
+#required variables/z-test/confidence interval
+home_prices <- c(305000, 280000, 265000, 315000, 290000, 275000, 325000, 
+                 300000, 285000, 310000, 282000, 270000, 330000, 295000, 
+                 290000, 320000, 288000, 280000, 308000, 281000, 267000, 
+                 312000, 292000, 278000, 322000, 303000, 287000, 311000)
+x_bar <- mean(home_prices)
+mu0 <- 300000
+n <- 28
+sigma <- 40000
+
+#z-stat/print z-stat
+z <- (x_bar - mu0) / (sigma/sqrt(n))
+z
+
+#p value
+p_two <- 2 * (1 - pnorm(abs(z)))
+critical_value_two_upper <- qnorm(0.975)  
+critical_value_two_lower <- qnorm(0.025)
+
+#confidence interval
+CI_lower <- x_bar - critical_value_two_upper*(sigma/sqrt(n))
+CI_upper <- x_bar + critical_value_two_upper*(sigma/sqrt(n))
+
+#print p-value/confidence interval bounds 
+p_two
+CI_lower
+CI_upper
+```
+
+## Conclusion
+
+Based on our sample of home prices, the confidence interval tells us that we are 95% confident that the true $μ$ lies between \$280398.40 and \$310030.20. The null hypothesis of the true mean equaling \$300,000 is not rejected. The p-value is greater than our significance level; therefore, the null hypothesis is not rejected, and the true mean is most likely \$300,000.
+
+------------------------------------------------------------------------
+
+## Task 2 - Two-Mean Inference
+
+**Question:** Is there a statistically significant difference in the average sale price between homes with a Ranch style and homes with a Colonial style? Use the two-mean method assigned to your band and provide a 95% CI for the difference in means.
+
+1.  A **two-sample (Welch) t-test** was conducted, using the standard deviations calculated from the sample data.
+
+Normality of data was checked. Since the variances are assumed unequal, a Welch t-test is used.
+
+## Results
+
+**Ranch Home Prices**: \$305000, \$265000, \$315000, \$275000, \$300000, \$310000, \$270000, \$295000, \$320000, \$280000, \$308000, \$267000, \$312000, \$278000, \$303000, \$311000
+
+**Colonial Home Prices:** \$280000, \$290000, \$325000, \$285000, \$282000, \$330000, \$290000, \$288000, \$281000, \$292000, \$322000, \$287000
+
+**Required Variables**
+
+1.  Two numeric vectors named ranch_homes and colonial_homes containing the 16 ranch home prices and the 12 colonial home prices
+
+2.  Two variables, n1 and n2, for the sample size of ranch homes and colonial homes
+
+3.  Two variables, x_bar1 and x_bar2, for the sample means of ranch home prices and colonial home prices
+
+4.  Two variables, s1 and s2, for the sample standard deviations of ranch home prices and colonial home prices
+
+**Hypothesis**
+
+-   $H_0$: There is no difference in the sample mean home prices. $\mu_1$ = $\mu_2$
+-   $H_A$: There is a difference in the sample mean home prices. $\mu_1$ $≠$ $\mu_2$
+
+#### Task
+
+1.  Calculate the t-statistic for a two-sample (Welch) t-test
+
+2.  Calculate the p-value for a two-tailed test
+
+3.  Print the t-statistic and p-value
+
+4.  Report a 95 % confidence interval and interpret the confidence interval
+
+5.  State your conclusion (Reject H₀ or Fail to Reject H₀) based on comparing the p-value to $α$ = 0.05
+
+```{r}
+
+#required variables 
+ranch_homes <- c(305000, 265000, 315000, 275000, 300000, 310000, 270000, 
+                 295000, 320000, 280000, 308000, 267000, 312000, 278000, 
+                 303000, 311000)
+colonial_homes <- c(280000, 290000, 325000, 285000, 282000, 330000, 
+                    290000, 288000, 281000, 292000, 322000, 287000)
+n1 <- length(ranch_homes)
+n2 <- length(colonial_homes)
+x_bar1 <- mean(ranch_homes)
+x_bar2 <- mean(colonial_homes)
+s1 <- sd(ranch_homes)
+s2 <- sd(colonial_homes)
+
+#t-stat / print t-stat
+t <- (x_bar1 - x_bar2) / sqrt(s1^2/n1 + s2^2/n2)
+t
+
+#degrees of freedom 
+df_num <- (s1^2/n1 + s2^2/n2)^2
+df_den <- ((s1^2/n1)^2)/(n1 - 1) + ((s2^2/n2)^2)/(n2 - 1)
+df <- df_num / df_den
+
+#p-value
+p_two <- 2 * (1 - pt(abs(t), df = df))
+crit_val_two_upper <- qt(0.975, df = df)
+crit_val_two_lower <- qt(0.025, df = df)
+
+#confidence interval
+CI_lower <- (x_bar1 - x_bar2) - crit_val_two_upper * sqrt(s1^2/n1 + s2^2/n2)
+CI_upper <- (x_bar1 - x_bar2) + crit_val_two_upper * sqrt(s1^2/n1 + s2^2/n2)
+
+#print p-value/confidence interval 
+p_two
+CI_lower
+CI_upper
+
+
+```
+
+## Conclusion
+
+Based on our two separate sample means, the confidence interval indicates that we are 95% confident that the true difference lies between -\$16,026.99 and \$13,276.99. The null hypothesis is not rejected. Our p-value is greater than our significance level; therefore, the null hypothesis is not rejected, and there is no statistically significant difference in the sample means.
+
+------------------------------------------------------------------------
+
+## Task 3 - Proportion Inference
+
+**Question:** The agency believes that more than 75% of homes in this market have a garage. Test this claim. *Check assumptions carefully and state whether the normal approximation is appropriate for your sample.*
+
+1.  A **one-sample z-test** for proportion was conducted using the calculated sample proportion.
+
+Conditions of random sampling are assumed true. Conditions of normality were checked, and the second condition of normality for a proportion test was not satisfied.
+
+## Results
+
+**Data**
+
+Homes with a garage (x): 16
+
+Total sample size of homes (n): 28
+
+**Required Variables:**
+
+1.  a variable x for the homes that have a garage
+2.  a variable n for the total sample size of homes
+3.  a variable p_0 for the hypothesized population proportion
+4.  a variable p_hat calculating the sample proportion
+
+**Hypothesis**
+
+-   $H_0$:The true population proportion is 0.75. ($p$ = 0.75)
+
+-   $H_A$: The true population proportion is greater than 0.75. ($p$ \> 0.75)
+
+**Task**
+
+1.  Calculate the sample proportion with our given x and n values
+2.  Calculate the test statistic
+3.  Print the test statistic and the p-value
+4.  Interpret p-value
+5.  State your conclusion (Reject H₀ or Do Not Reject H₀) based on comparing the p-value to the significance level.
+
+```{r}
+x <- 16
+n <- 28
+p_0 <- 0.75
+p_hat <- x/n 
+alpha <- 0.05 
+z <- (p_hat - p_0) / sqrt(p_0 *(1 - p_0)/n)
+z
+p_right <- 1 - pnorm(z)
+p_right
+#check normality condition of one-proportion z-test
+n * p_0 #first condition satisfied n * p_0 >= 10
+n *(1 - p_0) #second condition not satisfied n * p_0 <10
+```
+
+## Conclusion
+
+The claim that 75% of homes in this market have a garage can be tested; however, a one-proportion z-test is not suitable. Two conditions must be met to determine if the sampling distribution of the sample proportion is approximately normal. The first condition is np0 $≥$ 10, which checks the probability of the first condition. This condition is satisfied. The second condition is n(1 - p0) $≥$ 10, which assesses the probability of failure. This condition is not met. Since the normal approximation conditions were not fulfilled, a different test should be used for this claim.
+
+------------------------------------------------------------------------
+
+## Task 4 - Chi-Square Inference
+
+**Question (independence):** Test for the association between a home's architectural style and whether it has a garage. Include the contingency table, expected counts, test statistic, and p-value.
+
+1.  A **chi-squared test** was used to test for independence between a home's architectural style and the presence of a garage.
+
+Conditions for the chi-square test are satisfied. Expected cell counts are greater than 5, so the following results will be accurate.
+
+## Results
+
+**Observed counts (from the sample):**
+
+| Style    | With Garage | Without Garage | Total |
+|----------|-------------|----------------|-------|
+| Ranch    | 9           | 7              | 16    |
+| Colonial | 7           | 5              | 12    |
+| Total    | 16          | 12             | 28    |
+
+**Hypotheses**\
+$H_0$: Style and Garage are **independent** (no association).\
+$H_A$: Style and Garage are **not** independent (associated).
+
+**Task**
+
+1.  Make a contingency table using the observed counts above
+2.  Test for the association between a home's architectural style and whether it has a garage using a chi-squared test
+3.  Interpret the p-value for a conclusion on whether the style and garage have an association or not
+
+```{r}
+#contigency table
+x <- c(9,7,
+       7,5)
+M <- matrix(x,
+            nrow = 2,
+            ncol = 2,
+            byrow = TRUE)
+M
+#test for association 
+M <- matrix(c(9,7,
+              7,5),
+            nrow = 2,
+            byrow = TRUE)
+#chi-squared test / expected 
+chisq.test(M, correct = FALSE)
+chisq.test(M, correct = FALSE)$expected
+```
+
+## Conclusion
+
+The condition for the expected counts in the chi-squared test is satisfied, which is that the expected frequency in each cell is at least 5. The smallest expected count is 5.14; therefore, the chi-squared test is suitable for this data. The p-value (0.9122) is much greater than our significance level $\alpha$ = 0.05, therefore we do not reject the null hypothesis. The style of a house, whether it is a ranch style or colonial style, most likely does not have an association with whether it has a garage or not. There is no conclusive evidence that there is an association between these two factors.
+
+------------------------------------------------------------------------
+
+## Task 5 - ANOVA Test
+
+**Question:** Does the average sale price differ across the three neighborhood groups (*CWE, Bevo, Soulard*)? Report the ANOVA table and a 95% CI for each group mean.
+
+1.  An **ANOVA test** was used between the three different neighborhood groups to determine whether the average sale price differs across the three neighborhoods.
+
+## Results
+
+**Hypothesis**
+
+$H_0$: All group means are equal. $\mu_1$ = $\mu_2$ = $\mu_3$
+
+$H_A$: Not all group means are equal.
+
+**Task**
+
+1.  Use an analysis of variance test to test the null hypothesis of the means being equal.
+2.  Interpret the p-value to reject or not reject the null hypothesis
+3.  Find the sample mean of each group
+4.  Find and interpret the confidence interval of each group using the population standard deviation, sample size, and sample means
+5.  Conclude with the ANOVA test results and the confidence intervals for each group sample mean.
+
+```{r}
+Group <- rep(c("CWE", "Bevo", "Soulard"), times = c(10,9,9))
+X <- c(305000,315000,325000,310000,330000,320000,308000,312000,322000,311000,
+       280000,290000,300000,282000,295000,288000,281000,292000,303000,
+       265000,275000,285000,270000,290000,280000,267000,278000,287000)
+fit <- aov(X ~ Group)
+anova(fit)
+
+#group means and 95 conf int 
+CWE_data <- c(305000,315000,325000,310000,330000,
+              320000,308000,312000,322000,311000)
+Bevo_data <- c(280000,290000,300000,282000,295000,
+               288000,281000,292000,303000)
+Soulard_data <- c(265000,275000,285000,270000,290000,
+                  280000,267000,278000,287000)
+mean_CWE <- mean(CWE_data)
+mean_Bevo <- mean(Bevo_data)
+mean_Soulard <- mean(Soulard_data)
+#conf int 
+sigma <- 40000
+alpha <- 0.05
+zstar <- qnorm(1 - alpha/2)
+
+n_CWE <- length(CWE_data)
+ME_CWE <- zstar * sigma / sqrt(n_CWE)
+c(mean_CWE - ME_CWE, mean_CWE + ME_CWE)
+
+n_Bevo <- length(Bevo_data)
+ME_Bevo <- zstar * sigma / sqrt(n_Bevo)
+c(mean_Bevo - ME_Bevo, mean_Bevo + ME_Bevo)
+
+n_Soulard <- length(Soulard_data)
+ME_Soulard <- zstar * sigma / sqrt(n_Soulard)
+c(mean_Soulard - ME_Soulard, mean_Soulard + ME_Soulard)
+
+
+
+```
+
+## Conclusion
+
+Through the one-way ANOVA test, we can infer that not all population means are equal. The null hypothesis is rejected because our p-value is extremely close to 0. Our significance level is 0.05, and since our p-value is less than our significance level, we reject the null hypothesis of the population means being equal. The confidence interval for the CWE group means tells us that we are 95% confident that the true population mean would lie between \$291008.20 and \$340591.80. The confidence interval for the Bevo group tells us that we are 95% confident that the true population mean would lie between \$263978.30 and \$316244.00. The confidence interval for the Soulard group mean tells us that we are 95% confident that the true population mean would lie between \$251311.60 and \$303577.30. These confidence intervals also help cement the rejection of the null hypothesis because there is a significant difference in the confidence intervals of Soulard and CWE.
+
+------------------------------------------------------------------------
+
+## Task 6 - Linear Regression
+
+**Question:** Can a home's square footage be used to predict its sale price? Provide the regression equation, R-squared, a 95% CI for the slope, and interpret the slope in context.
+
+1.  A **linear regression test** was used to see if there is a correlation between square footage and sale price
+
+## Results
+
+**Hypothesis**
+
+$H_0$: The slope is equal to zero. $\beta1$ = 0
+
+$H_A$: The slope is greater than zero. $\beta1$ \> 0
+
+**Tasks**
+
+1.  Use the square footage data and sale price data to create a linear regression model.
+2.  Show the regression equation by using the coef function
+3.  Provide the R-squared value and a 95% confidence interval for the slope
+4.  Interpret the p-value to reject or do not reject the null hypothesis, and state the conclusion
+
+```{r}
+x <- c(1900,1800,1750,1950,1850,1780,2000,1900,1820,1920,1810,1760,
+       2050,1880,1840,1980,1830,1800,1910,1810,1760,1960,1860,1790,
+       2010,1910,1830,1930)
+y <- c(305000, 280000, 265000, 315000, 290000, 275000, 325000, 300000, 
+       285000, 310000, 282000, 270000, 330000, 295000, 290000, 320000, 
+       288000, 280000, 308000, 281000, 267000, 312000, 292000, 278000, 
+       322000, 303000, 287000, 311000)
+model <- lm(y ~ x)
+coef(model)
+summary(model) # r squared value 
+
+
+plot(x,y)
+b0 <- coef(model)[1]
+b1 <- coef(model)[2]
+abline(b0,b1)
+confint(model, level = 0.95)
+
+
+
+```
+
+## Conclusion
+
+The slope of the regression equation is 220.5039. Since our p-value is 0, we can infer that a home's square footage can be used to predict its sale price. For every one square foot, the home price will increase by \$220.5039. Since the slope shows a positive number, it is increasing the price depending on the square footage of the home. Our R-squared value is the predictor of whether size affects the price or if there are other factors at play. With a high R-squared value of 0.9834, it shows that the square footage is a strong predictor of the price point. The confidence interval for the slope tells us we are 95% confident that each additional square foot will increase the dollar price between \$208.9629 and \$232.0448. All in all, a home's square footage can be used to predict its sale price.
+
+------------------------------------------------------------------------
+
+## Discussion
+
+Across the different analyses, our results seem to be relatively consistent with one another. Average sale price seems to only differ across neighborhoods, and there is also a strong linear correlation between square footage and sale price. The conditions for a proportional test for the agency, believing that more than 75% of homes in this market have a garage, were not met. We can also infer that there is no correlation between a home's architectural style and whether it has a garage. The practical significance of the statistical analysis is when searching for a new home to purchase, keep in mind that the average sale price is usually determined by which neighborhood you purchase your home in and the square footage of said home.
